@@ -1,7 +1,7 @@
 import cv2
 
-search_image    = "test.jpg"        # the larger image (test)
-template_image  = "reference.jpg"   # the template (reference)
+search_image    = "sea.bmp"        # the larger image (test)
+template_image  = "ref.bmp"   # the template (reference)
 
 search      = cv2.imread(search_image, cv2.IMREAD_GRAYSCALE)
 template    = cv2.imread(template_image, cv2.IMREAD_GRAYSCALE)
