@@ -63,7 +63,7 @@ def hierarchical(search, template, level):
     template_height, template_width = template.shape
 
     # use exhaustive search at the highest level
-    if level == 0:
+    if level <= 1:
         # using cv2.TM_SQDIFF
         D_min = float('inf')
         for n in range(0, search_height - template_height + 1):
@@ -119,7 +119,7 @@ def main():
     t = t_end - t_start
     top_left = cv2.minMaxLoc(ret)[2]
     bottom_right = top_left[0] + template.shape[1], top_left[1] + template.shape[0]
-    print("Benchmark : \t\t", top_left, "in %3d millisecond" % (t * 1000))
+    print("Benchmark : \t", top_left, "in %6d millisecond" % (t * 1000))
     benchmark = original.copy()
     cv2.rectangle(benchmark, top_left, bottom_right, 0, 2)
 
@@ -129,7 +129,7 @@ def main():
     t = t_end - t_start
     top_left = ret[1], ret[0]
     bottom_right = top_left[0]+template.shape[1], top_left[1]+template.shape[0]
-    print("Exhaustive : \t\t", top_left, "in %3d millisecond" %(t*1000))
+    print("Exhaustive : \t", top_left, "in %6d millisecond" %(t*1000))
     img1 = original.copy()
     cv2.rectangle(img1, top_left, bottom_right, 0, 2)
 
@@ -139,17 +139,17 @@ def main():
     t = t_end - t_start
     top_left = ret[1], ret[0]
     bottom_right = top_left[0] + template.shape[1], top_left[1] + template.shape[0]
-    print("2D log : \t\t\t", top_left, "in %3d millisecond" %(t*1000))
+    print("2D log : \t", top_left, "in %6d millisecond" %(t*1000))
     img2 = original.copy()
     cv2.rectangle(img2, top_left, bottom_right, 0, 2)
 
     t_start = time()
-    ret = hierarchical(test, template, 3)
+    ret = hierarchical(test, template, level=2)
     t_end = time()
     t = t_end - t_start
     top_left = ret[1]//2, ret[0]//2
     bottom_right = top_left[0] + template.shape[1], top_left[1] + template.shape[0]
-    print("Hierarchical : \t\t", top_left, "in %3d millisecond" %(t*1000))
+    print("Hierarchical : \t", top_left, "in %6d millisecond" %(t*1000))
     img3 = original.copy()
     cv2.rectangle(img3, top_left, bottom_right, 0, 2)
 
