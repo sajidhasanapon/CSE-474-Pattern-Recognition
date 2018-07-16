@@ -10,12 +10,12 @@ def bin2int(arr):
     return y
 
 # np.random.seed(11111)
-smallnumber = 0.0000000001 # so that logarithm doesn't break
+smallnumber = 0.0000000000000000000001 # so that logarithm doesn't break
 
 with open("config.txt", "r") as config_file:
     n, l = map(int, config_file.readline().split())
     weights = list(map(float, config_file.readline().split()))
-    sigma_squared = float(config_file.readline())
+    sigma_squared = float(config_file.readline()) + smallnumber
     sigma = np.sqrt(sigma_squared)
 
 with open("train.txt") as train_file:
@@ -60,14 +60,14 @@ for i in range(2**n):
 ######################################################################################################
 print("\n\n\nPrior probabilities:")
 for i in range(2**n):
-    print(i, "\t :",  prior_probabilities[i])
+    print(i, "\t :\t",  round(prior_probabilities[i], 2))
 # print(prior_probabilities)
 
 print("\n\n\nTransition probabilities:")
 for i in range(2**n):
     print(i, "\t : ", end="")
     for j in range(2**n):
-        print(transition_probabilities[i][j], "\t", end="")
+        print("\t%.2f" % (transition_probabilities[i][j]), end="")
     print("")
 # print(transition_probabilities)
 
@@ -75,7 +75,7 @@ for i in range(2**n):
 
 print("\n\n\nObservation means:")
 for i in range(2**n):
-    print(i, "\t : ", cluster_means[i])
+    print(i, "\t : \t%.2f" %(cluster_means[i]))
 # print(cluster_means)
 
 
@@ -100,9 +100,9 @@ x = X[0]
 temp_dict = {}
 for j in range(2**n):
     probability_x_given_cluster_j = scipy.stats.norm.pdf(x, cluster_means[j], sigma)
-    ln_p_x_given_w = log(probability_x_given_cluster_j)
+    ln_p_x_given_w = log(probability_x_given_cluster_j + smallnumber)
     probability_w_one = prior_probabilities[j]
-    ln_p_w_one = log(probability_w_one)
+    ln_p_w_one = log(probability_w_one + smallnumber)
     cost = ln_p_w_one + ln_p_x_given_w
     parent = None
     temp_dict[j] = (cost, parent)
@@ -113,7 +113,7 @@ for i in range(1, len(X)):
     temp_dict = {}
     for j in range(2 ** n):
         probability_x_given_cluster_j = scipy.stats.norm.pdf(x, cluster_means[j], sigma)
-        ln_p_x_given_w = log(probability_x_given_cluster_j)
+        ln_p_x_given_w = log(probability_x_given_cluster_j + smallnumber)
         max_cost = -float("inf")
         parent = None
         for k in range(2**n):
