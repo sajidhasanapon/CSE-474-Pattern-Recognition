@@ -9,6 +9,8 @@ def bin2int(arr):
         y += j<<i
     return y
 
+# np.random.seed(11111)
+smallnumber = 0.0000000001 # so that logarithm doesn't break
 
 with open("config.txt", "r") as config_file:
     n, l = map(int, config_file.readline().split())
@@ -33,7 +35,7 @@ for i in range(len(I)):
 # print(X)
 
 prior_probabilities = defaultdict(float)
-transition_probabilities = np.ones((2**n, 2**n))
+transition_probabilities = np.zeros((2**n, 2**n))
 clusters = defaultdict(list)
 cluster_means = defaultdict(float)
 
@@ -44,15 +46,19 @@ for i in range(1, len(I)):
     transition_probabilities[bin2int(samples[i])][bin2int(samples[i - 1])] += 1
     clusters[bin2int(samples[i])].append(I[i])
 
-transition_probabilities /= np.sum(transition_probabilities)
+print("\n\n\nTransition count:")
+print(transition_probabilities)
+
+transition_probabilities /= transition_probabilities.sum(axis=1, keepdims=True)
 
 for i in range(2**n):
     cluster_means[i] = (np.average(clusters[i]))
 
 for i in range(2**n):
     prior_probabilities[i] /= len(I)
+
 ######################################################################################################
-print("\n\nPrior probabilities:")
+print("\n\n\nPrior probabilities:")
 for i in range(2**n):
     print(i, "\t :",  prior_probabilities[i])
 # print(prior_probabilities)
@@ -112,7 +118,7 @@ for i in range(1, len(X)):
         parent = None
         for k in range(2**n):
             probability_wj_given_wk = transition_probabilities[j][k]
-            ln_p_wj_given_wk = log(probability_wj_given_wk)
+            ln_p_wj_given_wk = log(probability_wj_given_wk + smallnumber) #adding smallnumber to prevent log(zero)
             cost = cost_and_parent[i-1][k][0] + ln_p_x_given_w + ln_p_wj_given_wk
             if cost > max_cost:
                 max_cost = cost

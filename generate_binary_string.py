@@ -1,7 +1,7 @@
 import numpy as np
 
 L = []
-for i in range(100):
+for i in range(10000):
     x = np.random.rand()
     L.append(x < 0.5)
 
